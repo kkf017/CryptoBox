@@ -109,8 +109,9 @@ if __name__ == "__main__":
 	
 	cipher = encrypt(msg, (n,e))
 	print("\nEncrypt:\n{}".format(cipher))
-"""
 	
 	plain = decrypt(cipher, (n,d))
 	print("\nEncrypt:\n{}".format(plain))
+	
+"""
 

@@ -66,6 +66,7 @@ def decrypt(cipher:str, key:Tuple[int])->None:
 		print(i, "->", x1, x2, x3, x4)	
 	return None
 
+"""
 if __name__ == "__main__":
  
 	msg = "helo:)iamurfriendsmilly."
@@ -80,3 +81,4 @@ if __name__ == "__main__":
 
 	plain = decrypt(cipher, (p, q)) # not working !!
 	print("\nEncrypt:\n{}".format(plain))
+"""
