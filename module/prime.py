@@ -205,8 +205,8 @@ if __name__ == "__main__":
 	n = 980
 	fact = primefact(n)
 	print("\n{} -> {}".format(fact, n))
-	
-"""
+"""	
+
 
 
 

@@ -8,17 +8,6 @@ from GF8 import galois
 
 
 
-
-PADD = "%"
-BYTES = 32 # 16 octets par bloc -> 128 bits
-	   # 24 octets par bloc -> 192 bits
-	   # 32 octets par bloc -> 256 bits
-R = 15 # 16 round keys -> AES-128
-       # 13 round keys -> AES-192
-       # 15 round keys -> AES-256
-
-
-
 Sbox = [
         [0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76],
         [0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0],
@@ -60,262 +49,261 @@ SboxInv = [
 ]
 
 
-#################################################################################################
-# AES256 
+
+class AES256():
+	
+	def __init__(self,):
+		
+		self.PADD = "%"
+		self.BYTES = 32 # 16 octets par bloc -> 128 bits
+			        # 24 octets par bloc -> 192 bits
+			        # 32 octets par bloc -> 256 bits
+		self.R = 15 # 16 round keys -> AES-128
+		            # 13 round keys -> AES-192
+		            # 15 round keys -> AES-256
 
 
-def binary(x:str)->None:
-	"""
-	"""
-	x = x.encode('utf-8') # len(s.encode('utf-8'))
-	y = ord(x) # to get ASCII code of char
-	y = bin(y) # to get bin format - "{0:b}".format(y), hex()
-	return None
-	
-	
-def padding(plain:str, a:str)->str:
-	"""
-		Function to padd plaintext.
-		Input:
-			plain - plain text
-			a - char to padd
-		Output:
-			plaintext (padded)
-	"""          
-	if len(plain) % BYTES != 0:
-		plain += "".join([a for _ in range(BYTES - len(plain) % BYTES)])	
-	return plain
+	def padding(self, plain:str)->str:
+		"""
+			Function to padd plaintext.
+			Input:
+				plain - plain text
+				a - char to padd
+			Output:
+				plaintext (padded)
+		"""          
+		if len(plain) % self.BYTES != 0:
+			plain += "".join([self.PADD for _ in range(self.BYTES - len(plain) % self.BYTES)])	
+		return plain
 	
 
-def keySchedule(key:str)->None:
-	"""
-		Function to expand key (key scheduling).
-		Input:
-			key - initial key
-		Output:
-			key expansion (for R rounds)
-	"""
-	def xor(x:str, y:str)->str:
-		op = ""
-		for i in range(len(x)):
-			xi = x[i]#.encode('utf-8')
-			yi = y[i]#.encode('utf-8')
-			z = ord(xi) ^ ord(yi) # operator.xor(ord(x),ord(y))
-			op += chr(z)
-		return op
+	def keySchedule(self, key:str)->None:
+		"""
+			Function to expand key (key scheduling).
+			Input:
+				key - initial key
+			Output:
+				key expansion (for R rounds)
+		"""
+		def xor(x:str, y:str)->str:
+			op = ""
+			for i in range(len(x)):
+				xi = x[i]#.encode('utf-8')
+				yi = y[i]#.encode('utf-8')
+				z = ord(xi) ^ ord(yi) # operator.xor(ord(x),ord(y))
+				op += chr(z)
+			return op
 		
-	def RoundConstant(n:int)->str:
-		rci = [-1]
-		for i in range(1,n+1): # Revoir index avec list rci.
-			if i == 1:
-				rci.append(1)
-			elif i>1 and  rci[i-1] < int("0x80", 0):
-				rci.append(2*rci[i-1])
-			elif i>1 and  rci[i-1] >= int("0x80", 0):
-				rci.append((2*rci[i-1])^0x11B)
-			else:
-				pass
-		return "".join([chr(rci[-1]), chr(0x00), chr(0x00),chr(0x00)])
-		
-	def RotWord(x:str)->str:
-		return x[1:]+x[0]
-		
-	def SubWord(x:str)->str:
-		z = ""
-		for y in x:
-			if ord(y) < 16:
-				i = 0
-				j = int("0x{}".format(hex(ord(y))[2]),0)
-			else:
-				i = int("0x{}".format(hex(ord(y))[2]),0)
-				j = int("0x{}".format(hex(ord(y))[3]),0)
-			value = Sbox[i][j]
-			z += chr(value)			
-		return z
-		  
-	if len(key) != BYTES:
-		raise Exception("\n\033[{}m[-]Error: Key size has to be {} bytes.".format("0;33", BYTES))
-	
-	N = BYTES*8 // 32 # length of the key in 32-bit words (4*8bits): 
-			  	#4 words -> AES-128, 
-			  	#6 words -> AES-192
-			  	#8 words -> AES-256
-	key32 = [copy.copy(key[i*4:(i+1)*4]) for i in range(N)] 
-		
-	W = []
-	for i in range(N*R):
-		if i < N:
-			W.append(key32[i])
-						
-		elif i>=N and i%N == 0:
-			wi = xor(xor(W[i-N],SubWord(RotWord(W[i-1]))), RoundConstant(int(i/N)))
-			W.append(wi)
+		def RoundConstant(n:int)->str:
+			rci = [-1]
+			for i in range(1,n+1): # Revoir index avec list rci.
+				if i == 1:
+					rci.append(1)
+				elif i>1 and  rci[i-1] < int("0x80", 0):
+					rci.append(2*rci[i-1])
+				elif i>1 and  rci[i-1] >= int("0x80", 0):
+					rci.append((2*rci[i-1])^0x11B)
+				else:
+					pass
+			return "".join([chr(rci[-1]), chr(0x00), chr(0x00),chr(0x00)])
 			
-		elif i>=N and N>6 and i%N==4:
-			wi = xor(W[i-N],SubWord(W[i-1]))
-			W.append(wi)
-		else:
-			wi = xor(W[i-N], W[i-1])
-			W.append(wi)	
-	return W
-	
-
-def blockencrypt(plain: str, keys: List[str])->str:
-	"""
-		Function to encrypt a block (of 128/192/256 bytes).
-		Input:
-			plain - plaintext (block to encrypt)
-			keys - key expansion (from keyschedule)
-		Output:
-			block (encrypted)
-	"""
-	def AddRoundKey(x:str, y:str)->str: # -> XOR bit à bit
-		op = ""
-		for i in range(len(x)):
-			xi = x[i]#.encode('utf-8')
-			yi = y[i]#.encode('utf-8')
-			z = ord(xi) ^ ord(yi) # operator.xor(ord(x),ord(y))
-			op += chr(z)
-		return op
-
-	def SubBytes(x:str)->str:
-		z = ""
-		for y in x:
-			if ord(y) < 16:
-				i = 0
-				j = int("0x{}".format(hex(ord(y))[2]),0)
+		def RotWord(x:str)->str:
+			return x[1:]+x[0]
+			
+		def SubWord(x:str)->str:
+			z = ""
+			for y in x:
+				if ord(y) < 16:
+					i = 0
+					j = int("0x{}".format(hex(ord(y))[2]),0)
+				else:
+					i = int("0x{}".format(hex(ord(y))[2]),0)
+					j = int("0x{}".format(hex(ord(y))[3]),0)
+				value = Sbox[i][j]
+				z += chr(value)			
+			return z
+			  
+		if len(key) != self.BYTES:
+			raise Exception("\n\033[{}m[-]Error: Key size has to be {} bytes.".format("0;33", self.BYTES))
+		
+		N = self.BYTES*8 // 32 # length of the key in 32-bit words (4*8bits): 
+				  	#4 words -> AES-128, 
+				  	#6 words -> AES-192
+				  	#8 words -> AES-256
+		key32 = [copy.copy(key[i*4:(i+1)*4]) for i in range(N)] 
+			
+		W = []
+		for i in range(N*self.R):
+			if i < N:
+				W.append(key32[i])
+							
+			elif i>=N and i%N == 0:
+				wi = xor(xor(W[i-N],SubWord(RotWord(W[i-1]))), RoundConstant(int(i/N)))
+				W.append(wi)
+				
+			elif i>=N and N>6 and i%N==4:
+				wi = xor(W[i-N],SubWord(W[i-1]))
+				W.append(wi)
 			else:
-				i = int("0x{}".format(hex(ord(y))[2]),0)
-				j = int("0x{}".format(hex(ord(y))[3]),0)
-			value = Sbox[i][j]
-			z += chr(value)		
-		return z
+				wi = xor(W[i-N], W[i-1])
+				W.append(wi)	
+		return W
 	
 
-	def ShiftRows(x:str)->str:
-		msg = copy.copy(x)
-		columns = [1,2,3,4,6,7,8,5,11,12,9,10,16,13,14,15] # to change ! - for 16, 24, 32 bytes
-		x1 = [msg[0:16][i-1] for i in columns]
-		x2 = [msg[16:][i-1] for i in columns]
-		return "".join(x1+x2)
+	def blockencrypt(self, plain: str, keys: List[str])->str:
+		"""
+			Function to encrypt a block (of 128/192/256 bytes).
+			Input:
+				plain - plaintext (block to encrypt)
+				keys - key expansion (from keyschedule)
+			Output:
+				block (encrypted)
+		"""
+		def AddRoundKey(x:str, y:str)->str: # -> XOR bit à bit
+			op = ""
+			for i in range(len(x)):
+				xi = x[i]#.encode('utf-8')
+				yi = y[i]#.encode('utf-8')
+				z = ord(xi) ^ ord(yi) # operator.xor(ord(x),ord(y))
+				op += chr(z)
+			return op
 
-	def MixColumns(x:str)->List[str]:
-		mtx = [2,3,1,1,
-	     	       1,2,3,1,
-	     	       1,1,2,3,
-	     	       3,1,1,2] # to change ! - for 16, 24, 32 bytes
-		return galois(x[0:16], mtx) + galois(x[16:], mtx)
+		def SubBytes(x:str)->str:
+			z = ""
+			for y in x:
+				if ord(y) < 16:
+					i = 0
+					j = int("0x{}".format(hex(ord(y))[2]),0)
+				else:
+					i = int("0x{}".format(hex(ord(y))[2]),0)
+					j = int("0x{}".format(hex(ord(y))[3]),0)
+				value = Sbox[i][j]
+				z += chr(value)		
+			return z
+		
 
-	N = BYTES//4
+		def ShiftRows(x:str)->str:
+			msg = copy.copy(x)
+			columns = [1,2,3,4,6,7,8,5,11,12,9,10,16,13,14,15] # to change ! - for 16, 24, 32 bytes
+			x1 = [msg[0:16][i-1] for i in columns]
+			x2 = [msg[16:][i-1] for i in columns]
+			return "".join(x1+x2)
 
-	cipher = AddRoundKey(plain, "".join(keys[0:0+N])) 
-	
-	for i in range(1,R-2+1): # -> R= 11 -2 = 9
+		def MixColumns(x:str)->List[str]:
+			mtx = [2,3,1,1,
+		     	       1,2,3,1,
+		     	       1,1,2,3,
+		     	       3,1,1,2] # to change ! - for 16, 24, 32 bytes
+			return galois(x[0:16], mtx) + galois(x[16:], mtx)
+
+		N = self.BYTES//4
+
+		cipher = AddRoundKey(plain, "".join(keys[0:0+N])) 
+		
+		for i in range(1,self.R-2+1): # -> R= 11 -2 = 9
+			cipher = SubBytes(cipher) 
+			cipher = ShiftRows(cipher) 
+			cipher = MixColumns(cipher) 
+			cipher = AddRoundKey(cipher, "".join(keys[i*N:i*N+N]))
+		
+
 		cipher = SubBytes(cipher) 
-		cipher = ShiftRows(cipher) 
-		cipher = MixColumns(cipher) 
-		cipher = AddRoundKey(cipher, "".join(keys[i*N:i*N+N]))
-	
-
-	cipher = SubBytes(cipher) 
-	cipher = ShiftRows(cipher)	
-	cipher = AddRoundKey(cipher, "".join(keys[10*N:10*N+N]))
-	return cipher
+		cipher = ShiftRows(cipher)	
+		cipher = AddRoundKey(cipher, "".join(keys[10*N:10*N+N]))
+		return cipher
 		
 	
-def blockdecrypt(cipher: str, keys: List[str])->None:
-	"""
-		Function to decrypt a block (of 128/192/256 bytes).
-		Input:
-			cipher - cipher (block to decrypt)
-			keys - key expansion (from keyschedule)
-		Output:
-			block (decrypted)
-	"""
-	def InvAddRoundKey(x:str, y:str)->str: # -> XOR bit à bit
-		op = ""
-		for i in range(len(x)):
-			xi = x[i]#.encode('utf-8')
-			yi = y[i]#.encode('utf-8')
-			z = ord(xi) ^ ord(yi) # operator.xor(ord(x),ord(y))
-			op += chr(z)
-		return op
+	def blockdecrypt(self, cipher: str, keys: List[str])->None:
+		"""
+			Function to decrypt a block (of 128/192/256 bytes).
+			Input:
+				cipher - cipher (block to decrypt)
+				keys - key expansion (from keyschedule)
+			Output:
+				block (decrypted)
+		"""
+		def InvAddRoundKey(x:str, y:str)->str: # -> XOR bit à bit
+			op = ""
+			for i in range(len(x)):
+				xi = x[i]#.encode('utf-8')
+				yi = y[i]#.encode('utf-8')
+				z = ord(xi) ^ ord(yi) # operator.xor(ord(x),ord(y))
+				op += chr(z)
+			return op
 
-	def InvShiftRows(x:str)->str:
-		msg = copy.copy(x)
-		columns = [1,2,3,4,8,5,6,7,11,12,9,10,14,15,16,13]  # to change ! - for 16, 24, 32 bytes
-		x1 = [msg[0:16][i-1] for i in columns]
-		x2 = [msg[16:][i-1] for i in columns]
-		return "".join(x1+x2)
+		def InvShiftRows(x:str)->str:
+			msg = copy.copy(x)
+			columns = [1,2,3,4,8,5,6,7,11,12,9,10,14,15,16,13]  # to change ! - for 16, 24, 32 bytes
+			x1 = [msg[0:16][i-1] for i in columns]
+			x2 = [msg[16:][i-1] for i in columns]
+			return "".join(x1+x2)
+			
+		def InvSubBytes(x:str)->str:
+			z = ""
+			for y in x:
+				if ord(y) < 16:
+					i = 0
+					j = int("0x{}".format(hex(ord(y))[2]),0)
+				else:
+					i = int("0x{}".format(hex(ord(y))[2]),0)
+					j = int("0x{}".format(hex(ord(y))[3]),0)
+				value = SboxInv[i][j]
+				z += chr(value)		
+			return z
+
+		def InvMixColumns(x:str)->List[str]:
+			mtx = [0x0E,0x0B,0x0D,0x09,
+			       0x09,0x0E,0x0B,0x0D,
+			       0x0D,0x09,0x0E,0x0B,
+			       0x0B,0x0D,0x09,0x0E]  # to change ! - for 16, 24, 32 bytes
+			return galois(x[0:16], mtx) + galois(x[16:], mtx)
 		
-	def InvSubBytes(x:str)->str:
-		z = ""
-		for y in x:
-			if ord(y) < 16:
-				i = 0
-				j = int("0x{}".format(hex(ord(y))[2]),0)
-			else:
-				i = int("0x{}".format(hex(ord(y))[2]),0)
-				j = int("0x{}".format(hex(ord(y))[3]),0)
-			value = SboxInv[i][j]
-			z += chr(value)		
-		return z
-
-	def InvMixColumns(x:str)->List[str]:
-		mtx = [0x0E,0x0B,0x0D,0x09,
-		       0x09,0x0E,0x0B,0x0D,
-		       0x0D,0x09,0x0E,0x0B,
-		       0x0B,0x0D,0x09,0x0E]  # to change ! - for 16, 24, 32 bytes
-		return galois(x[0:16], mtx) + galois(x[16:], mtx)
-	
-	
-	N = BYTES//4 #int(math.sqrt(BYTES))
-	
-	plain = InvAddRoundKey(cipher, "".join(keys[10*N:10*N+N]))	
-	plain = InvShiftRows(plain) 
-	plain = InvSubBytes(plain) 
-	
-	for i in range(R-2,0,-1): # -> R= 11 -2 = 9
-		plain = InvAddRoundKey(plain, "".join(keys[i*N:i*N+N]))		
-		plain = InvMixColumns(plain)		
-		plain = InvShiftRows(plain)
+		
+		N = self.BYTES//4 #int(math.sqrt(BYTES))
+		
+		plain = InvAddRoundKey(cipher, "".join(keys[10*N:10*N+N]))	
+		plain = InvShiftRows(plain) 
 		plain = InvSubBytes(plain) 
 		
-	plain = InvAddRoundKey(plain, "".join(keys[0:0+N])) 
-	return plain
+		for i in range(self.R-2,0,-1): # -> R= 11 -2 = 9
+			plain = InvAddRoundKey(plain, "".join(keys[i*N:i*N+N]))		
+			plain = InvMixColumns(plain)		
+			plain = InvShiftRows(plain)
+			plain = InvSubBytes(plain) 
+			
+		plain = InvAddRoundKey(plain, "".join(keys[0:0+N])) 
+		return plain
 	
 		
-def encrypt(plain: str, key:str)->None:
-	"""
-		Function to encrypt a message.
-		Input:
-			plain - plain text
-			key - key (for encryption)
-		Output:
-			cipher text (encryption)
-	"""
-	plain = padding(plain, PADD)
-	keys = keySchedule(key)	
-	cipher = [blockencrypt(plain[i*BYTES:(i+1)*BYTES], keys) for i in range(len(plain)//BYTES)] 
-	return "".join(cipher)
+	def encrypt(self, plain: str, key:str)->None:
+		"""
+			Function to encrypt a message.
+			Input:
+				plain - plain text
+				key - key (for encryption)
+			Output:
+				cipher text (encryption)
+		"""
+		plain = self.padding(plain)
+		keys = self.keySchedule(key)	
+		cipher = [self.blockencrypt(plain[i*self.BYTES:(i+1)*self.BYTES], keys) for i in range(len(plain)//self.BYTES)] 
+		return "".join(cipher)
 	
 
-def decrypt(cipher:str, key:str)->None:
-	"""
-		Function to decrypt a message.
-		Input:
-			plain - plain text
-			key - key (for decryption)
-		Output:
-			plain text (decryption)
-	"""
-	keys = keySchedule(key)
-	plain = [blockdecrypt(cipher[i*BYTES:(i+1)*BYTES], keys) for i in range(len(cipher)//BYTES)]
-	return "".join(plain)
+	def decrypt(self, cipher:str, key:str)->None:
+		"""
+			Function to decrypt a message.
+			Input:
+				plain - plain text
+				key - key (for decryption)
+			Output:
+				plain text (decryption)
+		"""
+		keys = self.keySchedule(key)
+		plain = [self.blockdecrypt(cipher[i*self.BYTES:(i+1)*self.BYTES], keys) for i in range(len(cipher)//self.BYTES)]
+		return "".join(plain)
 	
 	
-#################################################################################################
-# main
 
 """
 if __name__ == "__main__":
@@ -323,17 +311,19 @@ if __name__ == "__main__":
 	plain = "helo,:(iamtired,iamexhausted"
 	key = "helo:)iamyourkey+toencryptSecret" # clés de 256 bits -> 32 bytes
 	
-	print("\n{} {} {} {}".format(plain, len(plain), len(plain)//BYTES, len(plain)%BYTES))
+	aes256 = AES256()
+	
+	print("\n{} {}".format(plain, len(plain)))
 	print("{}".format([hex(ord(i)) for i in plain]))
 	
-	cipher = encrypt(plain, key)
+	cipher = aes256.encrypt(plain, key)
 	
-	print("\n{} {}".format(cipher, len(cipher)//BYTES))
+	print("\n{} {}".format(cipher, len(cipher)))
 	print("{}".format([hex(ord(i)) for i in cipher]))
 	
-	plain = decrypt(cipher, key)
+	plain = aes256.decrypt(cipher, key)
 	
-	print("\n{} {}".format(plain, len(plain)//BYTES))
+	print("\n{} {}".format(plain, len(plain)))
 	print("{}".format([hex(ord(i)) for i in plain]))
-"""
 
+"""
