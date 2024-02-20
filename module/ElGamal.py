@@ -81,7 +81,7 @@ class ElGamal():
 			plain.append(chr(pi))
 		return "".join(plain)
 	
-
+"""
 if __name__ == "__main__":
 	
 	msg = "helo:)iamurfriendsmilly."
@@ -96,4 +96,4 @@ if __name__ == "__main__":
 	print("\n")
 	for i in range(len(cipher)):
 		print("{} ({}) -> {} -> {} ({})".format(msg[i], ord(msg[i]), cipher[i], plain[i], ord(plain[i])))
-	
+"""

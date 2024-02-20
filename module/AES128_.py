@@ -7,13 +7,6 @@ from typing import List, Dict
 from GF8 import galois
 
 
-"""	
-	AES:
-		- https://www.utc.fr/~wschon/sr06/txPHP/aes/Key/Key.php
-		- https://www.emse.fr/~dutertre/documents/synth_AES128.pdf
-		- https://en.wikipedia.org/wiki/AES_key_schedule
-		- https://en.wikipedia.org/wiki/Rijndael_S-box
-"""
 
 
 

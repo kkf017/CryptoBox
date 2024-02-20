@@ -4,11 +4,6 @@ from prime import Euclidean, primefact
 
 from typing import Tuple, Any
 
-"""
-	# https://www.apprendre-en-ligne.net/crypto/rabin/mvc.pdf
-	# https://homepages.math.uic.edu/~leon/mcs425-s08/handouts/chinese_remainder.pdf
-	# https://ccc.cs.uni-duesseldorf.de/~rothe/CRYPTOCOMPLEXITY2/folien-4-rabin.pdf
-"""
 
 
 class Zn(): 
@@ -157,8 +152,7 @@ def order(x:int, n:int, limit:int)->None:
 		order += 1
 	return order
 
-
-###################################################################################################			
+			
 
 def ChineseRemainder(x:int, p:int, q:int)->Tuple[int]:
 	"""
@@ -200,27 +194,4 @@ def FastExponent(n:int, exp:int, mod:int)->int:
 	polynom = [i for i in range(len(y)) if int(y[-1-i])]
 	return math.prod([n**i%mod for i in list(map(lambda x: 2**x, polynom))])%mod
 	
-"""
-if __name__ == "__main__":
-
-	# 2⁶⁴⁴ mod  645, 12⁴² mod 15
-	n = 12
-	exp = 42
-	mod = 15
-	res = FastExponent(n, exp, mod)
-	print("\n{}^{} mod {} -> {}".format(n,exp,mod,res))
-	
-	n = 8
-	print("\nZn: {}".format(list(Zn(n))))
-	print("\nZn^*: {}".format(list(Zn_(n))))
-	
-	print("\nEuler totient function: {}".format(totient(7)))
-	
-	print("\norder: {}".format(order(3,10, 1000)))
-	
-	print("\nGenerators Zn^*: {}".format(list(generators(11))))
-	
-	print("\nPhi Euler: {}".format(Euler(12)))
-	
-"""
 

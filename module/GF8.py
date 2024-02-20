@@ -4,11 +4,6 @@ import math
 from typing import List
 
 
-#https://www.youtube.com/watch?v=WPz4Kzz6vk4
-#https://www.youtube.com/watch?v=SDrzMyqi2Sc
-#https://crypto.stackexchange.com/questions/63139/how-to-do-hexadecimal-multiplication-in-gf28
-
-
 def polynom(x:int)->List[int]:
 	binary = "{0:b}".format(x)	
 	y = [i for i in range(len(binary)) if int(binary[-1-i]) == 1]
@@ -68,51 +63,3 @@ def galois(X:str, mtx:List[int])->str:
 			res.append(chr(xy))
 	return "".join(res)
 
-	
-"""		
-if __name__ == "__main__":
-	# A=X⁵+X⁴+1, B=X⁵+X²+X
-	#A = 49
-	#B = 38
-	#func(A,B)
-	
-	
-	mtx = [0x2,0x3,0x1,0x1,
-	     0x1,0x2,0x3,0x1,
-	     0x1,0x1,0x2,0x3,
-	     0x3,0x1,0x1,0x2]
-	     
-	     
-	print(mtx)
-	
-	msg = [0x87,0xF2,0x4D,0x97,
-	       0x6E,0x4C,0x90,0xEC, 
-	       0x46,0xE7,0x4A,0xC3, 
-	       0xA6,0x8C,0xD8,0x95]
-	       
-	print("\n",msg)
-	       
-	msg = "".join([chr(i) for i in msg])
-	
-	res = galois(msg, mtx)
-	
-	print("\n")
-	convert = lambda x: hex(ord(x))
-	for i in range(4): # sqrt(16)
-		print(convert(res[i*4]), convert(res[4*i+1]), convert(res[4*i+2]), convert(res[4*i+3]))
-		
-	
-	mtx = [0x0E,0x0B,0x0D,0x09,
-	     0x09,0x0E,0x0B,0x0D,
-	     0x0D,0x09,0x0E,0x0B,
-	     0x0B,0x0D,0x09,0x0E]
-	     
-	print("\n",mtx)
-	
-	res = galois(res, mtx)
-	
-	print("\n")
-	convert = lambda x: hex(ord(x))
-	for i in range(4): # sqrt(16)
-		print(convert(res[i*4]), convert(res[4*i+1]), convert(res[4*i+2]), convert(res[4*i+3]))
-"""

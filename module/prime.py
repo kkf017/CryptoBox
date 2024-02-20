@@ -186,28 +186,4 @@ def Euclidean(x:int, y:int)->Tuple[int]:
 		t[i] = t[i]%x
 		
 	return r[i], s[i], t[i]
-			
-
-	
-"""	
-if __name__ == "__main__":
-
-	pgcd, b1, b2 = Euclidean(17,14)
-	print("\n\nEuclid. algorithm:")
-	print("{} x {} = {} mod {}".format(b1, 17, b1*17%14 ,14))
-	print("{} x {} = {} mod {}".format(b2, 14, b2*14%17 ,17))
-	
-	pgcd, b1, b2 = Euclidean(352, 19)
-	print("\n\nEuclid. algorithm:")
-	print("{} x {} = {} mod {}".format(b1, 352, b1*352%19 ,19))
-	print("{} x {} = {} mod {}".format(b2, 19, b2*19%352 ,352))
-	
-	n = 980
-	fact = primefact(n)
-	print("\n{} -> {}".format(fact, n))
-"""	
-
-
-
-
 	
