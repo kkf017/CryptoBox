@@ -1,2 +1,2 @@
 # CryptoBox
-Tools for cryptography.
+Toolbox for cryptography.
