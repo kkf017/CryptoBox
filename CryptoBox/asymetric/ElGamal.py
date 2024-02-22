@@ -5,11 +5,19 @@ from CryptoBox.arithmetic.modulo import Zn_, generators, order, FastExponent
 
 from typing import List, Tuple, Union
 
-	# WARNING !!
-	# See condition. 
-		# func. keys(): -> generate p (prime number)
-			# randprime() - range - (modulus n)
-			# p < 20: # len(p*q) >= 1024 bits
+"""
+	Warning !!
+		Signature/Verification:
+			have to be completed.
+				(signature redundancy function, verification)
+
+
+	WARNING !!
+	See condition. 
+		func. keys(): -> generate p (prime number)
+			randprime() - range - (modulus n)
+			p < 20: # len(p*q) >= 1024 bits
+"""
 
 BOUND = 60
 UPPER = 256
@@ -46,22 +54,24 @@ class ElGamal():
 		return (p, alpha, exp), a
 
 
-	def encrypt(self, plain:str)->List[Tuple[int]]:
+	def encrypt(self, plain:str, key:Tuple[int])->List[Tuple[int]]:
 		"""
 			Function to encrypt a message.
 			Input:
 				plain - message to encrypt
 			Output:
 				cipher (text) 
-		"""		
+		"""
+		(p, alpha, exp) = key
+			
 		if type(plain) == str:
 			plain = [ord(i) for i in plain]
 		
 		cipher = []	
 		for x in plain:		
-			k = random.randint(1, self.p-2)
-			lambda_ = FastExponent(self.alpha,k,self.p) # lambda = alpha^k mod p
-			delta = (x * FastExponent(self.exp,k,self.p))%self.p # delta = mi(alpha^a)^k mod p
+			k = random.randint(1, p-2)
+			lambda_ = FastExponent(alpha,k,p) # lambda = alpha^k mod p
+			delta = (x * FastExponent(exp,k,p))%p # delta = mi(alpha^a)^k mod p
 			cipher.append((lambda_, delta))
 		return cipher
 
@@ -80,4 +90,27 @@ class ElGamal():
 			pi = (FastExponent(lambda_,self.p-1-self.a,self.p) * delta)%self.p
 			plain.append(chr(pi))
 		return "".join(plain)
+		
+		
+	def signature(self,)->None:
+		"""
+			Function to compute signature.
+			Input:
+				cipher - ...
+			Output:
+				...
+		"""
+		def R()->None: 
+			return None
+		return None
+	
+	def verification(self,)->None:
+		"""
+			Function to verify signature.
+			Input:
+				cipher -...
+			Output:
+				...
+		"""
+		return None
 	

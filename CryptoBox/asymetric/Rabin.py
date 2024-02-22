@@ -5,11 +5,18 @@ from CryptoBox.arithmetic.modulo import ChineseRemainder
 
 from typing import List, Tuple
 
-	# WARNING !!
-	# See condition. 
-		# func. keys(): -> generate p (prime number)
-			# randprime() - range - (modulus n)
-			# p*q >= 1024: # len(p*q) >= 1024 bits	
+"""
+	Warning !!
+		Signature/Verification:
+			have to be completed.
+				(signature redundancy function, verification)
+
+	WARNING !!
+	See condition. 
+		func. keys(): -> generate p (prime number)
+			randprime() - range - (modulus n)
+			p*q >= 1024: # len(p*q) >= 1024 bits	
+"""
 
 BOUND = 1024 #2**12
 LOWER = 2
@@ -40,7 +47,7 @@ class Rabin():
 		return n, (p, q)
 	
 	
-	def encrypt(self, plain:str)->str:
+	def encrypt(self, plain:str, key:int)->str:
 		"""
 			Function to encrypt a message.
 			Input:
@@ -53,7 +60,7 @@ class Rabin():
 		if type(plain) == str:
 			plain = [ord(i) for i in plain]
 			
-		cipher = [i**2%self.n for i in plain]
+		cipher = [i**2%key for i in plain]
 		return "".join([chr(i) for i in cipher])
 	
 
@@ -75,3 +82,27 @@ class Rabin():
 		
 		plain = [[chr(x) for x in ChineseRemainder(i, self.p, self.q)] for i in cipher]	
 		return plain
+
+	def signature(self,)->None:
+		"""
+			Function to ...
+			Input:
+				cipher - ...
+			Output:
+				...
+		"""
+		def R()->None: # signature redundancy function
+			return None
+		return None
+	
+	def verification(self,)->None:
+		"""
+			Function to ...
+			Input:
+				cipher -...
+			Output:
+				...
+		"""
+		def R()->None: # signature redundancy function (inv.)
+			return None
+		return None
