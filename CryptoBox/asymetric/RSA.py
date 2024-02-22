@@ -4,8 +4,9 @@ import math
 
 from typing import List, Tuple, Union
 
-from prime import randprime, Euclidean
-from modulo import FastExponent
+from CryptoBox.arithmetic.prime import randprime, Euclidean
+from CryptoBox.arithmetic.modulo import FastExponent
+
 
 class RSA():
 	def __init__(self, n=1024):
@@ -96,18 +97,4 @@ class RSA():
 			
 		plain = [FastExponent(i, self.d, self.n) for i in cipher]
 		return "".join([chr(i) for i in plain])
-	
-"""
-if __name__ == "__main__":
-	
-	msg = "helo:)iamurfriendsmilly."
-	
-	rsa = RSA(1024) # 1024, 2048
-	
-	cipher = rsa.encrypt(msg)
-	print("\nEncrypt:\n{}".format(cipher))
-	
-	plain = rsa.decrypt(cipher)
-	print("\nEncrypt:\n{}".format(plain))
-"""
 

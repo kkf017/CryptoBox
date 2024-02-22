@@ -1,7 +1,7 @@
 import random
 
-from prime import randprime
-from modulo import Zn_, generators, order, FastExponent
+from CryptoBox.arithmetic.prime import randprime
+from CryptoBox.arithmetic.modulo import Zn_, generators, order, FastExponent
 
 from typing import List, Tuple, Union
 
@@ -81,19 +81,3 @@ class ElGamal():
 			plain.append(chr(pi))
 		return "".join(plain)
 	
-"""
-if __name__ == "__main__":
-	
-	msg = "helo:)iamurfriendsmilly."
-	
-	elgamal = ElGamal()
-	print("\nPublic key: p {}, alpha ´{}, alpha^a mod p {}".format(elgamal.p, elgamal.alpha, elgamal.exp))
-	print("Private key: a ´{}".format(elgamal.a))	
-	
-	cipher = elgamal.encrypt(msg)
-	plain = elgamal.decrypt(cipher)
-	
-	print("\n")
-	for i in range(len(cipher)):
-		print("{} ({}) -> {} -> {} ({})".format(msg[i], ord(msg[i]), cipher[i], plain[i], ord(plain[i])))
-"""

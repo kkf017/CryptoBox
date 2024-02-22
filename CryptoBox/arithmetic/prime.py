@@ -4,6 +4,7 @@ import math
 
 from typing import List, Tuple, Dict
 
+
 class primerange(): 
 	"""
 		Iterator to generate prime numbers (in a range).
@@ -39,7 +40,7 @@ class primerange():
 					flag = False
 	
 								
-				if flag: #isprime(y, self.primes):
+				if flag:
 					self.primes.append(y)
 					self.x = y
 					break
@@ -186,4 +187,11 @@ def Euclidean(x:int, y:int)->Tuple[int]:
 		t[i] = t[i]%x
 		
 	return r[i], s[i], t[i]
+			
+
+		
+
+
+
+
 	

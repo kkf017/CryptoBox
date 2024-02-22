@@ -4,17 +4,16 @@ import operator
 
 from typing import List, Dict
 
-from GF8 import galois
-
+from CryptoBox.arithmetic.GF8 import galois
 
 
 
 
 PADD = "%"
-BYTES = 16 # 16 octets par bloc -> 128 bits
+BYTES = 32 # 16 octets par bloc -> 128 bits
 	   # 24 octets par bloc -> 192 bits
 	   # 32 octets par bloc -> 256 bits
-R = 11 # 16 round keys -> AES-128
+R = 15 # 16 round keys -> AES-128
        # 13 round keys -> AES-192
        # 15 round keys -> AES-256
 
@@ -48,6 +47,7 @@ SboxInv = [
         [0x72, 0xf8, 0xf6, 0x64, 0x86, 0x68, 0x98, 0x16, 0xd4, 0xa4, 0x5c, 0xcc, 0x5d, 0x65, 0xb6, 0x92],
         [0x6c, 0x70, 0x48, 0x50, 0xfd, 0xed, 0xb9, 0xda, 0x5e, 0x15, 0x46, 0x57, 0xa7, 0x8d, 0x9d, 0x84],
         [0x90, 0xd8, 0xab, 0x00, 0x8c, 0xbc, 0xd3, 0x0a, 0xf7, 0xe4, 0x58, 0x05, 0xb8, 0xb3, 0x45, 0x06],
+        
         [0xd0, 0x2c, 0x1e, 0x8f, 0xca, 0x3f, 0x0f, 0x02, 0xc1, 0xaf, 0xbd, 0x03, 0x01, 0x13, 0x8a, 0x6b],
         [0x3a, 0x91, 0x11, 0x41, 0x4f, 0x67, 0xdc, 0xea, 0x97, 0xf2, 0xcf, 0xce, 0xf0, 0xb4, 0xe6, 0x73],
         [0x96, 0xac, 0x74, 0x22, 0xe7, 0xad, 0x35, 0x85, 0xe2, 0xf9, 0x37, 0xe8, 0x1c, 0x75, 0xdf, 0x6e],
@@ -60,6 +60,7 @@ SboxInv = [
 ]
 
 
+
 def binary(x:str)->None:
 	"""
 	"""
@@ -67,6 +68,7 @@ def binary(x:str)->None:
 	y = ord(x) # to get ASCII code of char
 	y = bin(y) # to get bin format - "{0:b}".format(y), hex()
 	return None
+	
 	
 def padding(plain:str, a:str)->str:
 	"""
@@ -80,7 +82,7 @@ def padding(plain:str, a:str)->str:
 	if len(plain) % BYTES != 0:
 		plain += "".join([a for _ in range(BYTES - len(plain) % BYTES)])	
 	return plain
-
+	
 
 def keySchedule(key:str)->None:
 	"""
@@ -138,7 +140,7 @@ def keySchedule(key:str)->None:
 	key32 = [copy.copy(key[i*4:(i+1)*4]) for i in range(N)] 
 		
 	W = []
-	for i in range(N*R):#(4*R):
+	for i in range(N*R):
 		if i < N:
 			W.append(key32[i])
 						
@@ -189,18 +191,20 @@ def blockencrypt(plain: str, keys: List[str])->str:
 
 	def ShiftRows(x:str)->str:
 		msg = copy.copy(x)
-		columns = [1,2,3,4,6,7,8,5,11,12,9,10,16,13,14,15]
-		return "".join([msg[i-1] for i in columns])
+		columns = [1,2,3,4,6,7,8,5,11,12,9,10,16,13,14,15] # to change ! - for 16, 24, 32 bytes
+		x1 = [msg[0:16][i-1] for i in columns]
+		x2 = [msg[16:][i-1] for i in columns]
+		return "".join(x1+x2)
 
 	def MixColumns(x:str)->List[str]:
 		mtx = [2,3,1,1,
 	     	       1,2,3,1,
 	     	       1,1,2,3,
-	     	       3,1,1,2]
-		return galois(x, mtx)
+	     	       3,1,1,2] # to change ! - for 16, 24, 32 bytes
+		return galois(x[0:16], mtx) + galois(x[16:], mtx)
 
-	N = BYTES//4 #int(math.sqrt(BYTES))
-	
+	N = BYTES//4
+
 	cipher = AddRoundKey(plain, "".join(keys[0:0+N])) 
 	
 	for i in range(1,R-2+1): # -> R= 11 -2 = 9
@@ -208,13 +212,14 @@ def blockencrypt(plain: str, keys: List[str])->str:
 		cipher = ShiftRows(cipher) 
 		cipher = MixColumns(cipher) 
 		cipher = AddRoundKey(cipher, "".join(keys[i*N:i*N+N]))
+	
 
 	cipher = SubBytes(cipher) 
 	cipher = ShiftRows(cipher)	
 	cipher = AddRoundKey(cipher, "".join(keys[10*N:10*N+N]))
 	return cipher
-
-
+		
+	
 def blockdecrypt(cipher: str, keys: List[str])->None:
 	"""
 		Function to decrypt a block (of 128/192/256 bytes).
@@ -235,8 +240,10 @@ def blockdecrypt(cipher: str, keys: List[str])->None:
 
 	def InvShiftRows(x:str)->str:
 		msg = copy.copy(x)
-		columns = [1,2,3,4,8,5,6,7,11,12,9,10,14,15,16,13]
-		return "".join([msg[i-1] for i in columns])
+		columns = [1,2,3,4,8,5,6,7,11,12,9,10,14,15,16,13]  # to change ! - for 16, 24, 32 bytes
+		x1 = [msg[0:16][i-1] for i in columns]
+		x2 = [msg[16:][i-1] for i in columns]
+		return "".join(x1+x2)
 		
 	def InvSubBytes(x:str)->str:
 		z = ""
@@ -255,8 +262,8 @@ def blockdecrypt(cipher: str, keys: List[str])->None:
 		mtx = [0x0E,0x0B,0x0D,0x09,
 		       0x09,0x0E,0x0B,0x0D,
 		       0x0D,0x09,0x0E,0x0B,
-		       0x0B,0x0D,0x09,0x0E]
-		return galois(x, mtx)
+		       0x0B,0x0D,0x09,0x0E]  # to change ! - for 16, 24, 32 bytes
+		return galois(x[0:16], mtx) + galois(x[16:], mtx)
 	
 	
 	N = BYTES//4 #int(math.sqrt(BYTES))
@@ -274,8 +281,7 @@ def blockdecrypt(cipher: str, keys: List[str])->None:
 	plain = InvAddRoundKey(plain, "".join(keys[0:0+N])) 
 	return plain
 	
-
-
+		
 def encrypt(plain: str, key:str)->None:
 	"""
 		Function to encrypt a message.
@@ -290,7 +296,7 @@ def encrypt(plain: str, key:str)->None:
 	cipher = [blockencrypt(plain[i*BYTES:(i+1)*BYTES], keys) for i in range(len(plain)//BYTES)] 
 	return "".join(cipher)
 	
-	
+
 def decrypt(cipher:str, key:str)->None:
 	"""
 		Function to decrypt a message.
@@ -303,31 +309,7 @@ def decrypt(cipher:str, key:str)->None:
 	keys = keySchedule(key)
 	plain = [blockdecrypt(cipher[i*BYTES:(i+1)*BYTES], keys) for i in range(len(cipher)//BYTES)]
 	return "".join(plain)
+	
 
-	
-"""
-if __name__ == "__main__":
-	
-	plain = "helo,iamtired,iamexhausted"
-	key = "helo:)iamyourkey" # clés de 128 bits -> 16 bytes
-	
-	print("\n{} {}".format(plain, len(plain)//BYTES))
-	print("{}".format([hex(ord(i)) for i in plain]))
-	
-	cipher = encrypt(plain, key)
-	
-	print("\n{} {}".format(cipher, len(cipher)//BYTES))
-	print("{}".format([hex(ord(i)) for i in cipher]))
-	
-	plain = decrypt(cipher, key)
-	
-	print("\n{} {}".format(plain, len(plain)//BYTES))
-	print("{}".format([hex(ord(i)) for i in plain]))
-"""
-	
-		
-		
-	
-		
-		
-		
+
+

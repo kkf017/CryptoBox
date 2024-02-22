@@ -1,7 +1,7 @@
 import random
 
-from prime import randprime
-from modulo import ChineseRemainder
+from CryptoBox.arithmetic.prime import randprime
+from CryptoBox.arithmetic.modulo import ChineseRemainder
 
 from typing import List, Tuple
 
@@ -75,22 +75,3 @@ class Rabin():
 		
 		plain = [[chr(x) for x in ChineseRemainder(i, self.p, self.q)] for i in cipher]	
 		return plain
-	
-"""
-if __name__ == "__main__":
- 
-	msg = "helo:)iamurfriendsmilly."
-	#msg = "こんにちはマーフレンド"
-	
-	rabin = Rabin()
-	
-	cipher = rabin.encrypt(msg)
-	print("\nEncrypt:\n{}".format(cipher))
-
-	plain = rabin.decrypt(cipher)
-	print("\nEncrypt:".format())
-
-	for i in range(len(msg)):
-		print("{} ({}) -> {} ({}), {} ({}), {} ({}), {} ({})".format(msg[i], ord(msg[i]), plain[i][0], ord(plain[i][0]), plain[i][1], ord(plain[i][1]), plain[i][2], ord(plain[i][2]), plain[i][3], ord(plain[i][3]) ))
-
-"""

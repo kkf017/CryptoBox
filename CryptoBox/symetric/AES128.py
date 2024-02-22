@@ -4,7 +4,7 @@ import operator
 
 from typing import List, Dict
 
-from GF8 import galois
+from CryptoBox.arithmetic.GF8 import galois
 
 
 
@@ -296,33 +296,3 @@ class AES128():
 		plain = [self.blockdecrypt(cipher[i*self.BYTES:(i+1)*self.BYTES], keys) for i in range(len(cipher)//self.BYTES)]
 		return "".join(plain)
 	
-
-
-"""
-if __name__ == "__main__":
-	
-	plain = "helo,iamtired,iamexhausted"
-	key = "helo:)iamyourkey" # clés de 128 bits -> 16 bytes
-	
-	
-	aes128 = AES128()
-	
-	print("\n{} {}".format(plain, len(plain)))
-	print("{}".format([hex(ord(i)) for i in plain]))
-	
-	cipher = aes128.encrypt(plain, key)
-	
-	print("\n{} {}".format(cipher, len(cipher)))
-	print("{}".format([hex(ord(i)) for i in cipher]))
-	
-	plain = aes128.decrypt(cipher, key)
-	
-	print("\n{} {}".format(plain, len(plain)))
-	print("{}".format([hex(ord(i)) for i in plain]))
-"""	
-		
-		
-	
-		
-		
-		

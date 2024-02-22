@@ -1,7 +1,7 @@
 import random
 
-from prime import randprime
-from modulo import Zn_, generators, order, FastExponent
+from CryptoBox.arithmetic.prime import randprime
+from CryptoBox.arithmetic.modulo import Zn_, generators, order, FastExponent
 
 from typing import List, Tuple, Union
 
@@ -82,23 +82,3 @@ def decrypt(cipher:List[Tuple[int]], key:int)->str:
 		pi = (FastExponent(lambda_,p-1-a,p) * delta)%p
 		plain.append(chr(pi))
 	return "".join(plain)
-
-"""
-if __name__ == "__main__":
-	
-	msg = "helo:)iamurfriendsmilly."
-	#msg = "こんにちはマーフレンド"
-	
-	(p, alpha, exp), a = keys()
-	print("\nPublic key: p {}, alpha ´{}, alpha^a mod p {}".format(p, alpha, exp))
-	print("Private key: a ´{}".format(a))
-	
-	
-	cipher = encrypt(msg, (p, alpha, exp))
-	plain = decrypt(cipher, (p,a))
-	
-	print("\n")
-	for i in range(len(cipher)):
-		print("{} ({}) -> {} -> {} ({})".format(msg[i], ord(msg[i]), cipher[i], plain[i], ord(plain[i])))
-	
-"""

@@ -4,8 +4,8 @@ import math
 
 from typing import List, Tuple, Union
 
-from prime import randprime, Euclidean
-from modulo import FastExponent
+from CryptoBox.arithmetic.prime import randprime, Euclidean
+from CryptoBox.arithmetic.modulo import FastExponent
 
 		
 
@@ -97,19 +97,3 @@ def decrypt(cipher:str, key:Tuple[int])->str:
 	plain = [FastExponent(i, d, n) for i in cipher]
 	return "".join([chr(i) for i in plain])
 	
-"""
-if __name__ == "__main__":
-	
-	msg = "helo:)iamurfriendsmilly."
-	
-	n = 1024 # 1024, 2048 
-
-	(n,e), d = keys(n)
-	
-	cipher = encrypt(msg, (n,e))
-	print("\nEncrypt:\n{}".format(cipher))
-	
-	plain = decrypt(cipher, (n,d))
-	print("\nEncrypt:\n{}".format(plain))
-"""
-

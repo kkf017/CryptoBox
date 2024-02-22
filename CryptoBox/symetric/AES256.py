@@ -4,7 +4,7 @@ import operator
 
 from typing import List, Dict
 
-from GF8 import galois
+from CryptoBox.arithmetic.GF8 import galois
 
 
 
@@ -302,28 +302,3 @@ class AES256():
 		keys = self.keySchedule(key)
 		plain = [self.blockdecrypt(cipher[i*self.BYTES:(i+1)*self.BYTES], keys) for i in range(len(cipher)//self.BYTES)]
 		return "".join(plain)
-	
-	
-
-"""
-if __name__ == "__main__":
-	
-	plain = "helo,:(iamtired,iamexhausted"
-	key = "helo:)iamyourkey+toencryptSecret" # clés de 256 bits -> 32 bytes
-	
-	aes256 = AES256()
-	
-	print("\n{} {}".format(plain, len(plain)))
-	print("{}".format([hex(ord(i)) for i in plain]))
-	
-	cipher = aes256.encrypt(plain, key)
-	
-	print("\n{} {}".format(cipher, len(cipher)))
-	print("{}".format([hex(ord(i)) for i in cipher]))
-	
-	plain = aes256.decrypt(cipher, key)
-	
-	print("\n{} {}".format(plain, len(plain)))
-	print("{}".format([hex(ord(i)) for i in plain]))
-
-"""

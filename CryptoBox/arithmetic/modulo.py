@@ -1,9 +1,8 @@
 import math
 
-from prime import Euclidean, primefact
+from CryptoBox.arithmetic.prime import Euclidean, primefact
 
 from typing import Tuple, Any
-
 
 
 class Zn(): 
@@ -115,8 +114,8 @@ def Euler(n:int)->int:
 		phi(n) = product{pi^ei-pi^(ei-1)}
 	"""
 	x = primefact(n)
-	print(n,x)
 	return math.prod([(p**x[p] - p**(x[p]-1)) for p in x.keys()])
+
 
 def totient(n:int)->int:
 	"""
@@ -152,7 +151,7 @@ def order(x:int, n:int, limit:int)->None:
 		order += 1
 	return order
 
-			
+
 
 def ChineseRemainder(x:int, p:int, q:int)->Tuple[int]:
 	"""
@@ -193,5 +192,5 @@ def FastExponent(n:int, exp:int, mod:int)->int:
 	y = "{0:b}".format(exp)
 	polynom = [i for i in range(len(y)) if int(y[-1-i])]
 	return math.prod([n**i%mod for i in list(map(lambda x: 2**x, polynom))])%mod
-	
+
 
