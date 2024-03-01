@@ -5,19 +5,6 @@ from CryptoBox.arithmetic.modulo import Zn_, generators, order, FastExponent
 
 from typing import List, Tuple, Union
 
-"""
-	Warning !!
-		Signature/Verification:
-			have to be completed.
-				(signature redundancy function, verification)
-
-
-	WARNING !!
-	See condition. 
-		func. keys(): -> generate p (prime number)
-			randprime() - range - (modulus n)
-			p < 20: # len(p*q) >= 1024 bits
-"""
 
 BOUND = 60
 UPPER = 256

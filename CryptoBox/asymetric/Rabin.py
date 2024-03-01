@@ -5,18 +5,6 @@ from CryptoBox.arithmetic.modulo import ChineseRemainder
 
 from typing import List, Tuple
 
-"""
-	Warning !!
-		Signature/Verification:
-			have to be completed.
-				(signature redundancy function, verification)
-
-	WARNING !!
-	See condition. 
-		func. keys(): -> generate p (prime number)
-			randprime() - range - (modulus n)
-			p*q >= 1024: # len(p*q) >= 1024 bits	
-"""
 
 BOUND = 1024 #2**12
 LOWER = 2

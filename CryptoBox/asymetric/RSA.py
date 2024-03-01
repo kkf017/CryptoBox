@@ -7,12 +7,7 @@ from typing import List, Tuple, Union
 from CryptoBox.arithmetic.prime import randprime, Euclidean
 from CryptoBox.arithmetic.modulo import FastExponent
 
-"""
-	Warning !!
-		Signature/Verification:
-			have to be completed.
-				(signature redundancy function, verification)
-"""
+
 
 class RSA():
 	def __init__(self, n=1024):
