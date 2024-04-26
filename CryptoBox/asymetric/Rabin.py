@@ -11,13 +11,13 @@ LOWER = 2
 UPPER = 1024//2	
 	
 class Rabin():
-	def __init__(self, ):
+	def __init__(self, p=-1, q=-1):
 	
 		#self.modulus = modulus
-		self.n, (self.p, self.q) = self.keys()
+		self.n, (self.p, self.q) = self.keys(p, q)
 			
 		
-	def keys(self,)->Tuple[int, Tuple[int]]:
+	def keys(self,p:int, q:int)->Tuple[int, Tuple[int]]:
 		"""
 			Function to compute public and private key.
 			Input:
@@ -26,11 +26,13 @@ class Rabin():
 				n - public key, (p, q) - private key
 		opt. 
 		"""
-		while 1:
-			p = randprime(LOWER, UPPER)
-			q = randprime(LOWER, UPPER)
-			if p%4==3 and q%4==3 and p!=q and p*q >= BOUND: # len(p*q) >= 1024 bits
-				break
+		if p==-1 or q ==-1:
+			while 1:
+				p = randprime(LOWER, UPPER)
+				q = randprime(LOWER, UPPER)
+				if p%4==3 and q%4==3 and p!=q and p*q >= BOUND: # len(p*q) >= 1024 bits
+					break
+				
 		n = p*q
 		return n, (p, q)
 	

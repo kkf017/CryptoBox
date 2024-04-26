@@ -10,12 +10,12 @@ from CryptoBox.arithmetic.modulo import FastExponent
 
 
 class RSA():
-	def __init__(self, n=1024):
+	def __init__(self, n=1024, p=-1, q=-1):
 		self.n = n
-		(self.n, self.e), self.d = self.keys()
+		(self.n, self.e), self.d = self.keys(p,q)
 			
 
-	def keys(self,)->Tuple[Union[Tuple[int], int]]:
+	def keys(self,p:int, q:int)->Tuple[Union[Tuple[int], int]]:
 		"""
 			Function to compute public and private key.
 			Input:
@@ -51,9 +51,11 @@ class RSA():
 			"""
 			pgcd, b1, b2 = Euclidean(phi, e)
 			return b2
-			
-		p = randprime(2, self.n//2)
-		q = randprime(2, self.n//2)	
+		
+		if p == -1:	
+			p = randprime(2, self.n//2)
+		if q == -1:
+			q = randprime(2, self.n//2)	
 		
 		n = p*q
 		phi = (p-1)*(q-1)

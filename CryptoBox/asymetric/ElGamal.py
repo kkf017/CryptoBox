@@ -11,10 +11,10 @@ UPPER = 256
 LOWER = 20
 
 class ElGamal():
-	def __init__(self,):
-		(self.p, self.alpha, self.exp), self.a = self.keys()
+	def __init__(self, p=-1):
+		(self.p, self.alpha, self.exp), self.a = self.keys(p)
 
-	def keys(self,)->Tuple[Union[Tuple[int], int]]:
+	def keys(self, p:int)->Tuple[Union[Tuple[int], int]]:
 		"""
 			Function to compute public and private key.
 			Input:
@@ -23,16 +23,22 @@ class ElGamal():
 				public and private keys (for encryption)
 		opt.   (p, alpha, alpha^a mod p) - pubic key, a - private key
 		"""
-		while 1:
-			p = randprime(LOWER, UPPER)
-			if p > BOUND: # len(p*q) >= 1024 bits
-				break
+		def get_p()->int:
+			while 1:
+				p = randprime(LOWER, UPPER)
+				if p > BOUND: # len(p*q) >= 1024 bits
+					break
+			return p
 		
+		#if p == -1:
+			#p = get_p()
+			
 		zn_ = list(Zn_(p))	
 		g = list(generators(p))
-		
+			
 		# check for empty sequence
-		
+				
+		print(f"GEN {g}")	
 		alpha = random.choice(g)
 		
 		a = random.randint(1, p-2) 
