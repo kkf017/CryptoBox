@@ -15,7 +15,7 @@ class DiffieHellman:
 	
 	def word(self, x:int)->None:
 		self.secret = x
-		self.exp = FastExponent(alpha, x, self.p)
+		self.exp = FastExponent(self.alpha, x, self.p)
 	
 	def key(self, beta:int)->None:
 		self.key = FastExponent(beta, self.secret, self.p)
