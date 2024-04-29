@@ -13,6 +13,12 @@ class RSA():
 	def __init__(self, n=1024, p=-1, q=-1):
 		self.n = n
 		(self.n, self.e), self.d = self.keys(p,q)
+		
+	def PrivateKey(self,)->Tuple[int]:
+		return (self.d)
+		
+	def PublicKey(self,)->Tuple[int]:
+		return (self.n, self.e)
 			
 
 	def keys(self,p:int, q:int)->Tuple[Union[Tuple[int], int]]:

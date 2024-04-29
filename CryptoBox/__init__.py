@@ -8,3 +8,5 @@ from .symetric.AES256 import AES256
 from .asymetric.RSA import RSA
 from .asymetric.Rabin import Rabin
 from .asymetric.ElGamal import ElGamal
+
+from .ktp.ktp import DiffieHellman

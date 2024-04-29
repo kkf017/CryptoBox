@@ -15,6 +15,12 @@ class Rabin():
 	
 		#self.modulus = modulus
 		self.n, (self.p, self.q) = self.keys(p, q)
+
+	def PrivateKey(self,)->Tuple[int]:
+		return (self.p, self.q)
+		
+	def PublicKey(self,)->Tuple[int]:
+		return (self.n)
 			
 		
 	def keys(self,p:int, q:int)->Tuple[int, Tuple[int]]:

@@ -14,6 +14,14 @@ class ElGamal():
 	def __init__(self, p=-1):
 		(self.p, self.alpha, self.exp), self.a = self.keys(p)
 
+
+	def PrivateKey(self,)->Tuple[int]:
+		return (self.a)
+		
+	def PublicKey(self,)->Tuple[int]:
+		return (self.p, self.alpha, self.exp)
+
+
 	def keys(self, p:int)->Tuple[Union[Tuple[int], int]]:
 		"""
 			Function to compute public and private key.
@@ -38,7 +46,7 @@ class ElGamal():
 			
 		# check for empty sequence
 				
-		print(f"GEN {g}")	
+		#print(f"GEN {g}")	
 		alpha = random.choice(g)
 		
 		a = random.randint(1, p-2) 
