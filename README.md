@@ -52,7 +52,7 @@ B = RSA(n=1024, p=1021, q=113)
 cipher = A.encrypt(msg, B.PublicKey())
 plain = B.decrypt(cipher)
 
-print(f"\n\nMsg : {msg}")
+print(f"Msg : {msg}")
 print(f"Plain : {plain}")
 ```
 
@@ -68,7 +68,7 @@ B = Rabin(p=251, q=1051)
 cipher = A.encrypt(msg, B.PublicKey())
 plain = B.decrypt(cipher)
 
-print(f"\n\nMsg : {msg}")
+print(f"Msg : {msg}")
 print(f"Plain : {plain}")
 
 ```
@@ -87,7 +87,7 @@ B = ElGamal(p=701, order=100)
 cipher = A.encrypt(msg, B.PublicKey())
 plain = B.decrypt(cipher)
 
-print(f"\n\nMsg : {msg}")
+print(f"Msg : {msg}")
 print(f"Plain : {plain}")
 ```
 
