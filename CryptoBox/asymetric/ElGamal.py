@@ -11,7 +11,8 @@ UPPER = 256
 LOWER = 20
 
 class ElGamal():
-	def __init__(self, p=-1):
+	def __init__(self, p=-1, order=1000):
+		self.order = order
 		(self.p, self.alpha, self.exp), self.a = self.keys(p)
 
 
@@ -42,11 +43,12 @@ class ElGamal():
 			#p = get_p()
 			
 		zn_ = list(Zn_(p))	
-		g = list(generators(p))
+		g = list(generators(p, self.order))
 			
 		# check for empty sequence
-				
-		#print(f"GEN {g}")	
+		if g == []:
+			raise Exception("\n\033[{}m[-]Error: no generator of multiplicative group found (p not valid).".format("0;33"))
+		
 		alpha = random.choice(g)
 		
 		a = random.randint(1, p-2) 

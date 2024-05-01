@@ -68,7 +68,7 @@ def isprime(n:int)->bool:
 
 			
 
-def randprime(upper:int, lower:int)->int:
+def randprime(lower:int, upper:int)->int:
 	"""
 		Function to generate (random) prime number (in a range).
 		Input:
@@ -77,7 +77,7 @@ def randprime(upper:int, lower:int)->int:
 		Output:
 			prime number (random)
 	"""
-	x = list(primerange(upper,lower))
+	x = list(primerange(lower, upper))
 	n = random.randint(0, len(x)-1)		
 	return x[n]
 	

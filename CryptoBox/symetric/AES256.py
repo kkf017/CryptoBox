@@ -52,9 +52,9 @@ SboxInv = [
 
 class AES256():
 	
-	def __init__(self,):
+	def __init__(self,padding="%"):
 		
-		self.PADD = "%"
+		self.PADD = padding
 		self.BYTES = 32 # 16 octets par bloc -> 128 bits
 			        # 24 octets par bloc -> 192 bits
 			        # 32 octets par bloc -> 256 bits
@@ -299,6 +299,17 @@ class AES256():
 			Output:
 				plain text (decryption)
 		"""
+		def clean(plain:str)->int:
+			count = 0
+			msg = plain[::-1]
+			for i in range(len(msg)):
+				if msg[i] == self.PADD:
+					count += 1
+				if msg[i+1] != self.PADD:
+					break
+			
+			return msg[count:][::-1]
+			
 		keys = self.keySchedule(key)
 		plain = [self.blockdecrypt(cipher[i*self.BYTES:(i+1)*self.BYTES], keys) for i in range(len(cipher)//self.BYTES)]
-		return "".join(plain)
+		return clean("".join(plain))

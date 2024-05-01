@@ -4,6 +4,8 @@ from CryptoBox.arithmetic.prime import Euclidean, primefact
 
 from typing import Tuple, Any
 
+ORDER = 1000
+
 
 class Zn(): 
 	"""
@@ -67,9 +69,10 @@ class generators():
 	opt. 
 		(the powers of a generator generates all elements in Zn^*)
 	"""
-	def __init__(self,n):
+	def __init__(self,n, order=1000):
 		self.n = n		
 		self.zn_ = list(Zn_(n))
+		self.order = 1000
 		
 		self.count = 0
 		
@@ -86,7 +89,7 @@ class generators():
 					raise StopIteration
 			
 				x = self.zn_[self.count]
-				xorder =  order(x, self.n, 1000) # change limit, for order() function !!
+				xorder =  order(x, self.n, self.order) # change limit, for order() function !!
 				y = [FastExponent(x, i, self.n) for i in range(xorder, 2*xorder)]		
 				if len(y) < len(self.zn_):
 					flag = False

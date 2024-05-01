@@ -1,5 +1,4 @@
-# CryptoBox
-Toolbox for cryptography.
+Toolbox for cryptography. (see documentation on [github](https://github.com/kkf017/Image-Processing-toolbox-))
 
 ### Libraries
 * Requires python>=3.5.
@@ -8,10 +7,10 @@ Toolbox for cryptography.
 
 #### Arithmetic
 
-It contains the **prime module** to perform operations with prime numbers. (see documentation)<br />
+It contains the **prime module** to perform operations with prime numbers. (see documentation on [github](https://github.com/kkf017/CryptoBox))<br />
 
 
-It also contains the **modulo module** to perform operations with modulo. (see documentation)<br />
+It also contains the **modulo module** to perform operations with modulo. (see documentation on [github](https://github.com/kkf017/CryptoBox))<br />
 
 
 #### Symmetric

@@ -109,7 +109,7 @@ class RSA():
 		return "".join([chr(i) for i in plain])
 		
 		
-	def signature(self, msg:str)->str:
+	def signature(self, msg:str)->None:
 		"""
 			Function to compute signature.
 			Input:
@@ -117,18 +117,9 @@ class RSA():
 			Output:
 				signature
 		"""
-		def R(x:int)->int: # signature redundancy function
-			return x
-			
-		if type(msg) == str:
-			msg = [ord(i) for i in msg]
-		
-		sign = [R(i) for i in msg]
-		sign = [FastExponent(i, self.d, self.n) for i in sign]
-		sign = [chr(i) for i in sign]
-		return "".join(sign)
+		return None
 	
-	def verification(self, sign:str, msg:str, key:Tuple[int])->str:
+	def verification(self, sign:str, msg:str, key:Tuple[int])->None:
 		"""
 			Function to verify signature.
 			Input:
@@ -136,21 +127,7 @@ class RSA():
 			Output:
 				verification
 		"""
-		def Rinv(x:int)->int: # signature redundancy function (inv.)
-			return x
-			
-		n, e = key
-		
-		if type(msg) == str:
-			msg = [ord(i) for i in msg]
-			
-		x = [FastExponent(i, e, n) for i in msg]
-		
-		# Warning !! check if x E MR - send verification
-		
-		sign = [Rinv(i) for i in x]
-		sign = [chr(i) for i in sign]
-		return "".join(sign)
+		return None
 
 
 
