@@ -143,7 +143,7 @@ def order(x:int, n:int, limit:int)->None:
 	opt. 
 	"""
 	if math.gcd(x, n) != 1:
-		raise Exception("\n\033[{}m[-]Error: pgcd({},{}) has to be equal to 1.".format("0;33", x, n))
+		raise Exception("\n\033[{}m[-]Error: pgcd({},{}) has to be equal to 1.\033[0m".format("0;33", x, n))
 	order = 1
 	while 1:
 		if FastExponent(x, order, n) == 1:
@@ -166,17 +166,22 @@ def ChineseRemainder(x:int, p:int, q:int)->Tuple[int]:
 	
 			solution to solve eq.
 	opt. 
-	"""	
+	"""
+	def modulo(x:int, y:int)->int:
+		return x - (x//y)*y
+				
 	n = p*q
-	mp = FastExponent(x, (p+1)//4, p)
-	mq = FastExponent(x, (q+1)//4, q)
-	_, _, p1 = Euclidean(q, p)
-	_, _, q1 = Euclidean(p, q)
 	
-	m1 = (mp*q*q1 + mq*p*p1)%n
-	m2 = (mp*q*q1 - mq*p*p1)%n
-	m3 = (- mp*q*q1 + mq*p*p1)%n
-	m4 = (- mp*q*q1 - mq*p*p1)%n
+	mp = FastExponent(x, (p+1)//4, p)%p	
+	mq = FastExponent(x, (q+1)//4, q)%q
+	
+	_, p1, _ = Euclidean(p,q) #_, _, p1 = Euclidean(q, p)
+	_, q1, _ = Euclidean(q,p) #_, _, q1 = Euclidean(p, q)
+	
+	m1 =  (mp*q*q1 + mq*p*p1)%n
+	m2 =  (mp*q*q1 - mq*p*p1)%n
+	m3 =  (- mp*q*q1 + mq*p*p1)%n
+	m4 =  (- mp*q*q1 - mq*p*p1)%n
 	
 	return m1, m2, m3, m4
 	

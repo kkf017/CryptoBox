@@ -155,7 +155,7 @@ def Euclidean(x:int, y:int)->Tuple[int]:
 	         ed = 1 mod phi(n)
 	"""	
 	if math.gcd(x, y) != 1:
-		raise Exception("\n\033[{}m[-]Error: pgcd({},{}) has to be equal to 1.".format("0;33", x, y))
+		raise Exception("\n\033[{}m[-]Error: pgcd({},{}) has to be equal to 1.\033[0m".format("0;33", x, y))
 		
 	r = [x, y]
 	s = [1, 0]
@@ -185,6 +185,8 @@ def Euclidean(x:int, y:int)->Tuple[int]:
 		s[i] = s[i]%y
 	if t[i] < 0:
 		t[i] = t[i]%x
+		
+		
 		
 	return r[i], s[i], t[i]
 			

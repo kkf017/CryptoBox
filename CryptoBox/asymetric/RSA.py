@@ -2,7 +2,7 @@ import copy
 import random
 import math
 
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Callable
 
 from CryptoBox.arithmetic.prime import randprime, Euclidean
 from CryptoBox.arithmetic.modulo import FastExponent
@@ -11,6 +11,7 @@ from CryptoBox.arithmetic.modulo import FastExponent
 
 class RSA():
 	def __init__(self, n=1024, p=-1, q=-1):
+		""" p, q of size ~n/2, with sizeof(n)=1024 or sizeof(n)=2048 """
 		self.n = n
 		(self.n, self.e), self.d = self.keys(p,q)
 		
@@ -28,6 +29,7 @@ class RSA():
 				n - modulus (1024, 2048...) 
 			Output:
 				(n,e) - pubic key, d - private key 
+		opt.
 		"""
 		def publicKey(phi:int)->int:
 			"""
@@ -58,16 +60,16 @@ class RSA():
 			pgcd, b1, b2 = Euclidean(phi, e)
 			return b2
 		
-		if p == -1:	
-			p = randprime(2, self.n//2)
+		if p == -1:
+			raise Exception("\n\033[{}m[-]Error: p, q not valid.\033[0m".format("0;33"))
 		if q == -1:
-			q = randprime(2, self.n//2)	
+			raise Exception("\n\033[{}m[-]Error: p, q not valid.\033[0m".format("0;33"))
 		
 		n = p*q
 		phi = (p-1)*(q-1)
 		
 		if p == q or phi <= 2:
-			raise Exception("\n\033[{}m[-]Error: p, q not valid.".format("0;33"))
+			raise Exception("\n\033[{}m[-]Error: p, q not valid.\033[0m".format("0;33"))
 		
 		e = publicKey(phi)
 		d = privateKey(e, phi)
@@ -109,25 +111,38 @@ class RSA():
 		return "".join([chr(i) for i in plain])
 		
 		
-	def signature(self, msg:str)->None:
+	def signature(self, msg:str, R: Callable)->str:
 		"""
 			Function to compute signature.
 			Input:
-				msg - ...
+				msg - message to sign
+				R - Redundancy function (hash)
 			Output:
 				signature
 		"""
-		return None
+		# compute redundancy function
+		sign = R(msg)		
+		sign = [ord(i) for i in sign]
+		sign = [FastExponent(i, self.d, self.n) for i in sign]
+		return "".join([chr(i) for i in sign])
 	
-	def verification(self, sign:str, msg:str, key:Tuple[int])->None:
+	def verification(self, msg:str, sign:str, key:Tuple[int])->bool:
 		"""
 			Function to verify signature.
 			Input:
-				msg -...
+				msg - received message
+				sign - signature
+				key -  public key (used to decrypt)
 			Output:
 				verification
 		"""
-		return None
+		n, e = key
+		check = [ord(i) for i in sign]
+		check = [FastExponent(i, e, n) for i in check]
+		check = "".join([chr(i) for i in check])
+		if not (msg == check):
+			return False
+		return True
 
 
 

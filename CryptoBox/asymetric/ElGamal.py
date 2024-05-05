@@ -1,20 +1,18 @@
+import math
 import random
 
-from CryptoBox.arithmetic.prime import randprime
+from CryptoBox.arithmetic.prime import randprime, Euclidean
 from CryptoBox.arithmetic.modulo import Zn_, generators, order, FastExponent
 
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Callable
 
 
-BOUND = 60
-UPPER = 256
-LOWER = 20
 
 class ElGamal():
 	def __init__(self, p=-1, order=1000):
+		""" len(p) >= 1024 bits """
 		self.order = order
 		(self.p, self.alpha, self.exp), self.a = self.keys(p)
-
 
 	def PrivateKey(self,)->Tuple[int]:
 		return (self.a)
@@ -30,24 +28,17 @@ class ElGamal():
 				...
 			Output:
 				public and private keys (for encryption)
-		opt.   (p, alpha, alpha^a mod p) - pubic key, a - private key
-		"""
-		def get_p()->int:
-			while 1:
-				p = randprime(LOWER, UPPER)
-				if p > BOUND: # len(p*q) >= 1024 bits
-					break
-			return p
-		
-		#if p == -1:
-			#p = get_p()
+		opt. 
+		"""		
+		if p == -1:
+			raise Exception("\n\033[{}m[-]Error: p not valid.\033[0m".format("0;33"))
 			
 		zn_ = list(Zn_(p))	
 		g = list(generators(p, self.order))
 			
 		# check for empty sequence
 		if g == []:
-			raise Exception("\n\033[{}m[-]Error: no generator of multiplicative group found (p not valid).".format("0;33"))
+			raise Exception("\n\033[{}m[-]Error: no generator of multiplicative group found (p not valid).\033[0m".format("0;33"))
 		
 		alpha = random.choice(g)
 		
@@ -95,25 +86,61 @@ class ElGamal():
 		return "".join(plain)
 		
 		
-	def signature(self,)->None:
+	def signature(self, msg:str, R:Callable)->Tuple[str]:
 		"""
 			Function to compute signature.
 			Input:
-				cipher - ...
+				msg - message to sign
+				R - Redundancy function (hash)
 			Output:
-				...
+				signature
 		"""
-		def R()->None: 
-			return None
-		return None
+		def modulo(x:int, y:int)->int:
+			return x - (x//y)*y
+			
+		sign = R(msg)
+		
+		while 1:
+			x = random.randint(1, self.p-2)
+			if math.gcd(x, self.p-1) == 1:
+				break
+		_, x1, _ = Euclidean(x,self.p-1)
 	
-	def verification(self,)->None:
+		r = FastExponent(self.alpha, x, self.p)
+		s = [modulo(x1*(ord(mi)-self.a*r), self.p-1)  for mi in sign]
+		
+		s = "".join([chr(i) for i in s])
+		
+		return r, s
+	
+	def verification(self, msg:str, sign:Tuple[str], key:int)->bool:
 		"""
 			Function to verify signature.
 			Input:
-				cipher -...
+				msg - received message
+				sign - signature
+				key -  public key (used to decrypt)
 			Output:
-				...
+				verification
+		
+		# https://github.com/jnyryan/elgamal-digital-signiture/blob/master/elsig.py
 		"""
-		return None
+		def modulo(x:int, y:int)->int:
+			return x - (x//y)*y
+			
+		(p, alpha, exp) = key
+		(r, s) = sign
+		
+		if not (1<=r and r<=self.p-2):
+			return False
+			
+		v1 =  [(FastExponent(exp,r,p)*FastExponent(r,ord(i),p)) % p for i in s]
+		v1 = "".join([chr(i) for i in v1])
+		
+		v2 = [FastExponent(alpha, ord(i), p) for i in msg]
+		v2 = "".join([chr(i) for i in v2])
+
+		if not (v1 == v2):
+			return False
+		return True
 	

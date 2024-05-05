@@ -121,7 +121,7 @@ class AES128():
 			return z
 			  
 		if len(key) != self.BYTES:
-			raise Exception("\n\033[{}m[-]Error: Key size has to be {} bytes.".format("0;33", self.BYTES))
+			raise Exception("\n\033[{}m[-]Error: Key size has to be {} bytes.\033[0m".format("0;33", self.BYTES))
 		
 		N = self.BYTES*8 // 32 # length of the key in 32-bit words (4*8bits): 
 				  	#4 words -> AES-128, 
