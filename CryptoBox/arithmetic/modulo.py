@@ -166,6 +166,7 @@ def ChineseRemainder(x:int, p:int, q:int)->Tuple[int]:
 	
 			solution to solve eq.
 	opt. 
+		https://culturemath.ens.fr/thematiques/lycee/le-chiffrement-de-rabin
 	"""
 	def modulo(x:int, y:int)->int:
 		return x - (x//y)*y

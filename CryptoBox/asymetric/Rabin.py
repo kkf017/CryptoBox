@@ -11,7 +11,7 @@ from functools import reduce
 	
 class Rabin():
 	def __init__(self, p=-1, q=-1):
-		""" len(pq) >= 1024 bits """
+		""" len(pq) >= 1024 bits and p,q  = 3 mod 4"""
 		#self.modulus = modulus
 		self.n, (self.p, self.q) = self.keys(p, q)
 
@@ -51,7 +51,7 @@ class Rabin():
 		if type(plain) == str:
 			plain = [ord(i) for i in plain]
 			
-		cipher = [i**2%key for i in plain]
+		cipher = [(i**2)%key for i in plain]
 		return "".join([chr(i) for i in cipher])
 	
 
@@ -74,7 +74,7 @@ class Rabin():
 		plain = [[chr(x) for x in ChineseRemainder(i, self.p, self.q)] for i in cipher]	
 		return plain
 
-	def signature(self, msg:str, R:Callable, n)->List[List[str]]:
+	def signature(self, msg:str, R:Callable)->List[List[str]]:
 		"""
 			Function to compute signature.
 			Input:
@@ -84,36 +84,18 @@ class Rabin():
 				signature
 		"""
 		def modulo(x:int, y:int)->int:
-			return x - (x//y)*y
-		
-		def ChineseRemainderXXX(m:List[int], a: List[int])->None:
-			def mul_inv(x, b):
-				b0 = b
-				x0, x1 = 0, 1
-				if b == 1: return 1
-				while x > 1:
-					q = x // b
-					x, b = b, x%b
-					x0, x1 = x1 - q * x0, x0
-				if x1 < 0: x1 += b0
-				return x1
-			sum = 0
-			prod = reduce(lambda acc, b: acc*b, m)
-			for n_i, a_i in zip(m, a):
-				p = prod // n_i
-				sum += a_i * mul_inv(p, n_i) * p
-			return sum % prod
-	
+			return x - (x//y)*y	
 			
 		sign = R(msg)
 		sign = [ord(i) for i in sign]
-		#sign = [[chr(x) for x in ChineseRemainder(i, self.p, self.q)] for i in sign]
 		
+		print(f"\n\nSignature:")
 		for i in sign:
-			print(f"\n{i} : {[modulo(x**2, n) for x in ChineseRemainder(i, self.p, self.q)]}")
-			#x = ChineseRemainderXXX([self.p, self.q], [i**((self.p+1)/4), i**((self.q+1)/4)])
-			#print(f"{x}")
-			input()
+			u = ChineseRemainder(i, self.p, self.q)
+			v = [pow(a,2,self.n) for a in u]
+			print(f"\n{i} : {u} -> {v}")
+			
+		sign = [[chr(x) for x in ChineseRemainder(i, self.p, self.q)] for i in sign]
 		return sign
 	
 	def verification(self, msg:str, sign:List[List[str]], key:int)->bool:
@@ -128,10 +110,10 @@ class Rabin():
 		"""
 		def modulo(x:int, y:int)->int:
 			return x - (x//y)*y
-			
+		
+		print(f"\n\nVerification:")
 		for i in range(len(sign)):
-			print("\n\n")
-			for x in sign[i]:
-				print(f"{i}, {ord(msg[i])} {(ord(x))**2%key} : {ord(x)} {ord(x)**2} - {key}")
-				input()
+			n = [pow(ord(x),2,key) for x in sign[i]]	
+			print(f"{ord(msg[i])} -> {n}")
+			input()
 		return True
