@@ -24,18 +24,6 @@ class DiffieHellman:
 
 class NeedhamSchroeder:
 	def __init__(self, A):
-		self.A = A
-		
-	def PrivateKey(self,)->Tuple[int]:
-		return self.A.PrivateKey()
-		
-	def PublicKey(self,)->Tuple[int]:
-		return self.A.PublicKey()
-	
-	def exchange(self, key:Tuple[int], *args:Tuple[str])->Tuple[int]:
-		pass
-	
-	def verification(self, key:Tuple[int], *args:Tuple[int])->Tuple[int]:
 		pass 
 		
 class EKE:
