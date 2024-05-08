@@ -5,14 +5,10 @@ from CryptoBox.arithmetic.modulo import ChineseRemainder
 
 from typing import List, Tuple, Callable
 
-
-from functools import reduce
-
 	
 class Rabin():
 	def __init__(self, p=-1, q=-1):
-		""" len(pq) >= 1024 bits and p,q  = 3 mod 4"""
-		#self.modulus = modulus
+		""" len(pq) >= 1024 bits and p,q  = 3 mod 4 """
 		self.n, (self.p, self.q) = self.keys(p, q)
 
 	def PrivateKey(self,)->Tuple[int]:
