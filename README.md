@@ -2,7 +2,7 @@
 Toolbox for cryptography.
 
 ### Libraries
-* Requires python>=3.5.
+* Requires python>=3.5 and hashlib library.
 
 ### Example
 
@@ -97,8 +97,9 @@ print(f"Plain : {plain}")
 
 This module contains functions **key agreement protocol** (KAP) and **key transport protocol** (KTP).
 
+###### Example 1
 ```bash
-imprt random
+import random
 from CryptoBox.arithmetic.prime import randprime
 from CryptoBox.arithmetic.modulo import generators
 from Cryptobox.ktp.ktp import  DiffieHellman
@@ -118,5 +119,34 @@ B.key(A.exp)
 	
 print(f"A : {A.key}")
 print(f"B : {B.key}")
+```
+
+###### Example 2
+```bash
+import random
+
+from CryptoBox.ktp.ktp import *
+from CryptoBox.asymetric.RSA import RSA
+from CryptoBox.arithmetic.prime import *
+from CryptoBox.hash.hash import *
+
+p = [randprime(60,1024) for i in range(4)]
+
+A = NeedhamSchroeder(RSA(n=1024, p=p[0], q=p[1]), hash=sha256)
+B = NeedhamSchroeder(RSA(n=1024, p=p[0], q=p[1]), hash=sha256)
+	
+k1 = chr(random.randint(0,1024))
+fromAtoB = A.exchange(B.PublicKey(), k1)
+	
+k2 = chr(random.randint(0,1024))
+fromAtoB1, fromAtoB2 = B.exchange(A.PublicKey(), k2, fromAtoB)
+	
+fromAtoB = A.verification(B.PublicKey(), fromAtoB1, fromAtoB2)
+	
+fromBtoA = B.verification(A.PublicKey(), fromAtoB)
+	
+print(f"A: k1 {A.k1}, k2 {A.k2}")
+print(f"B: k1 {B.k1}, k2 {B.k2}")
+print(f"A: {A.key} \nB: {B.key}")
 ```
 
