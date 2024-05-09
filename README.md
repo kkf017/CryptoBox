@@ -18,7 +18,7 @@ It also contains the **modulo module** to perform operations with modulo. (see d
 
 This module contains **symmetric functions** for encryption.
 
-```bash
+```python
 from CryptoBox.symetric.AES128 import AES128
 from CryptoBox.symetric.AES256 import AES256
 
@@ -40,7 +40,7 @@ print(f"Plain : {plain}")
 This module contains **asymmetric functions** for encryption.
 
 ###### Example 1
-```bash
+```python
 from CryptoBox.arithmetic.prime import randprime
 from CryptoBox.asymetric.RSA import RSA
 
@@ -57,7 +57,7 @@ print(f"Plain : {plain}")
 ```
 
 ###### Example 2
-```bash
+```python
 from CryptoBox.asymetric.Rabin import Rabin
 
 msg = "helo:)ThisismyCryptoBox."
@@ -75,7 +75,7 @@ print(f"Plain : {plain}")
 
 
 ###### Example 3
-```bash
+```python
 from CryptoBox.arithmetic.prime import randprime
 from CryptoBox.asymetric.ElGamal import ElGamal
 
@@ -98,7 +98,7 @@ print(f"Plain : {plain}")
 This module contains functions **key agreement protocol** (KAP) and **key transport protocol** (KTP).
 
 ###### Example 1
-```bash
+```python
 import random
 from CryptoBox.arithmetic.prime import randprime
 from CryptoBox.arithmetic.modulo import generators
@@ -122,7 +122,7 @@ print(f"B : {B.key}")
 ```
 
 ###### Example 2
-```bash
+```python
 import random
 
 from CryptoBox.ktp.ktp import *
@@ -134,19 +134,52 @@ p = [randprime(60,1024) for i in range(4)]
 
 A = NeedhamSchroeder(RSA(n=1024, p=p[0], q=p[1]), hash=sha256)
 B = NeedhamSchroeder(RSA(n=1024, p=p[0], q=p[1]), hash=sha256)
-	
+
+# (1) A generates a random number k1 and send it encrypted	
 k1 = chr(random.randint(0,1024))
 fromAtoB = A.exchange(B.PublicKey(), k1)
-	
+
+# (2) B generates a random number k2 and send i with k1 (both encrypted)	
 k2 = chr(random.randint(0,1024))
 fromAtoB1, fromAtoB2 = B.exchange(A.PublicKey(), k2, fromAtoB)
-	
+
+# (3) A verifies k1, and encrypt k2 (received), if it is ok.
 fromAtoB = A.verification(B.PublicKey(), fromAtoB1, fromAtoB2)
-	
+
+# (4) B verifies k2
 fromBtoA = B.verification(A.PublicKey(), fromAtoB)
 	
 print(f"A: k1 {A.k1}, k2 {A.k2}")
 print(f"B: k1 {B.k1}, k2 {B.k2}")
 print(f"A: {A.key} \nB: {B.key}")
+```
+###### Example 3
+```python
+p = [randprime(60,1024,1000) for i in range(4)]			
+		
+""" Verification for EKE (RSA, ElGamal) """
+password = ascii("".join([chr(random.randint(0,65536)) for _ in range(16)]))[:16]
+
+A = EKE(password, asym=RSA(n=1024, p=p[0], q=p[1]), sym=AES128(), profile="A")
+B = EKE(password, asym=RSA(n=1024, p=p[2], q=p[3]), sym=AES128(), profile="B")
+		
+# (1) A generates a public/private key and send public key to B, encrypted with password
+fromAtoB = A.KeyPublic()
+fromBtoA = B.KeyPublic(fromAtoB)
+		
+# (2) B generates a key session and send it encrypted
+fromBtoA = B.KeySession(16)
+fromAtoB = A.KeySession(fromBtoA)
+
+# (3) A generates a random number and send it encrypted with k
+fromAtoB1, fromAtoB2 =  A.RandomNumber()
+		
+# (4) B generates a random number rb and send it with ra, encrypted with k 
+fromBtoA1, fromBtoA2 = B.RandomNumber(fromAtoB1, fromAtoB2)
+fromAtoB = A.check(fromBtoA1, fromBtoA2)
+		
+fromBtoA = B.check(fromAtoB)
+
+print(f"Code ({i}): {fromBtoA}")
 ```
 

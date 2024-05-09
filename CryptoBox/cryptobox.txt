@@ -1,8 +1,0 @@
-
-Updates:
-	- Elgamal (for larger numbers)
-	- documentation
-
-	-signatures
-	-ktp
-	- elliptic curves

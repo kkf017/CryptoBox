@@ -71,7 +71,115 @@ class NeedhamSchroeder:
 			
 		
 		
+##################################################################################################
+# EKE
+	
+class EKEA:
+	def __init__(self, password, asym, sym):
+		self.password = password
+		self.A = asym
+		self.B = sym
+		
+	def KeyPublic(self, )->Tuple[int]:
+		if type((self.A).PublicKey()) == int:
+			i = (self.A).PublicKey()
+			return (self.B).encrypt(str(i), self.password)
+		
+		elif type((self.A).PublicKey()) == tuple:
+			keys = tuple([(self.B).encrypt(str(i), self.password) for i in (self.A).PublicKey()])
+			return keys
+		
+		else:
+			raise Exception("\n\033[0;33m[-]Error: Unknown type for KeyPublic.\033[0m")
+
+	def KeySession(self, key:str)->str:				
+		key = (self.B).decrypt(key, self.password) # symetric
+		#key = ascii((self.A).decrypt(key)) # asymetric
+		self.k = key
+		return self.k
+	
+	def RandomNumber(self,)->Tuple[str]:
+		self.ra = str(random.randint(0,65536))
+		return ((self.B).encrypt(self.ra, self.k), (self.B).encrypt(self.k, self.k))
+	
+	def check(self, rb:str, ra:str)->str:
+		ra = (self.B).decrypt(ra, self.k)
+		if not (ra == self.ra):
+			#raise Exception("\n\033[0;33m[-]Error: Random number ra are not equal (for A and B).\033[0m")
+			return ("\033[0;31mError for ra.\033[0m")
+		rb = eval((self.B).decrypt(rb, self.k))
+		return (self.B).encrypt(str(rb), self.k)
+			
+			
+			
+
+class EKEB:
+	def __init__(self, password, asym, sym):
+		self.password = password
+		self.A = asym
+		self.B = sym
+
+	
+	def KeyPublic(self, pub:Tuple[int])->Tuple[int]:
+		if type(pub) == str:
+			self.pub = int((self.B).decrypt(pub, self.password), base=10)
+			#self.pub = eval((self.B).decrypt(pub, self.password))
+		
+		elif type(pub) == tuple:
+			self.pub = tuple([int((self.B).decrypt(i, self.password), base=10) for i in pub])
+			#self.pub = tuple([eval((self.B).decrypt(i, self.password)) for i in pub])
+		else:
+			raise Exception("\n\033[0;33m[-]Error: Unknown type for KeyPublic.\033[0m")
+		return ()
+		
+
+	def KeySession(self, n:int)->str:
+		#key = ascii("".join([random.choice(string.printable) for _ in range(n)]))[:n]
+		key = ascii("".join([chr(random.randint(0,65536)) for _ in range(n)]))[:n]
+		self.k = key
+		#key = (self.A).encrypt(key, self.pub) # asymetric
+		key = (self.B).encrypt(key, self.password) # symetric
+		return key
+
+	def RandomNumber(self, ra:str, k:str)->Tuple[str]:
+		# check session
+		k = (self.B).decrypt(k, self.k)
+		if not (self.k == k):
+			raise Exception("\n\033[0;33m[-]Error: Key session are different (for A and B).\033[0m")
+			#return ("\033[0;31mError\033[0m")
+		self.ra = eval((self.B).decrypt(ra, self.k)) # int(, base=10)
+		self.rb = random.randint(0,65536)
+		return  ((self.B).encrypt(str(self.rb), self.k), (self.B).encrypt(str(self.ra), self.k))
+
+	def check(self,rb:str)->str:
+		rb = eval((self.B).decrypt(rb, self.k))
+		if not (self.rb == rb):
+			#raise Exception("\n\033[0;33m[-]Error: Random number ra are not equal (for A and B).\033[0m")
+			return "\033[0;31mError\033[0m"
+		return "\033[0;32mOK\033[0m"
+
 class EKE:
-	def __init__(self,):
-		pass
+	def __init__(self, password, asym, sym, profile):
+		match profile:
+			case "A":
+				self.eke = EKEA(password, asym, sym)
+			case "B":
+				self.eke = EKEB(password, asym, sym)
+			case _:
+				raise Exception("\n\033[0;33m[-]Error: Unknown profile for EKE (only A or B).\033[0m")
+				
+	def KeyPublic(self,*args:Tuple[Any])->Tuple[int]:
+		return (self.eke).KeyPublic(*args)
+	
+	def KeySession(self, *args:Tuple[Any])->str:
+		return (self.eke).KeySession(*args)
+
+	def RandomNumber(self, *args:Tuple[Any])->Tuple[str]:
+		return (self.eke).RandomNumber(*args)
+
+	def check(self, *args:Tuple[Any])->str:
+		return (self.eke).check(*args)
+	
+		
+################################################################################################
 	

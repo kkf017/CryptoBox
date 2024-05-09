@@ -4,8 +4,6 @@ from CryptoBox.arithmetic.prime import Euclidean, primefact
 
 from typing import Tuple, Any
 
-ORDER = 1000
-
 
 class Zn(): 
 	"""
@@ -90,10 +88,11 @@ class generators():
 			
 				x = self.zn_[self.count]
 				xorder =  order(x, self.n, self.order) # change limit, for order() function !!
-				y = [FastExponent(x, i, self.n) for i in range(xorder, 2*xorder)]		
-				if len(y) < len(self.zn_):
-					flag = False
-				flag = (set(self.zn_) <= set(y))
+				if not (xorder == -1): 
+					y = [FastExponent(x, i, self.n) for i in range(xorder, 2*xorder)]		
+					if len(y) < len(self.zn_):
+						flag = False
+					flag = (set(self.zn_) <= set(y))
 				
 				if flag:
 					value = self.zn_[self.count]
@@ -133,13 +132,14 @@ def totient(n:int)->int:
 	return len([x for x in range(1,n) if math.gcd(x, n) == 1])
 	
 	
-def order(x:int, n:int, limit:int)->None:
+def order(x:int, n:int, limit:int)->int:
 	"""
 		Function to compute order (of x modulo n).
 		Input:
 			x, n - numbers - pgcd(x, n) = 1
 		Output:
 			ordn() := smallest integer - such that a^x = 1 mod n.
+			-1 : when the order is not found (order > limit)
 	opt. 
 	"""
 	if math.gcd(x, n) != 1:
@@ -150,7 +150,8 @@ def order(x:int, n:int, limit:int)->None:
 			return order
 			
 		if order > limit:
-			raise Exception("\n\033[{}m[-]Error: Order of {} mod {}, not found.".format("0;33", x, n))
+			#raise Exception("\n\033[{}m[-]Error: Order of {} mod {}, not found.".format("0;33", x, n))
+			return -1
 		order += 1
 	return order
 
