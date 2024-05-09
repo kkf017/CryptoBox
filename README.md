@@ -155,6 +155,13 @@ print(f"A: {A.key} \nB: {B.key}")
 ```
 ###### Example 3
 ```python
+import random
+from CryptoBox.ktp.ktp import *
+from CryptoBox.symetric.AES128 import AES128
+from CryptoBox.asymetric.RSA import RSA
+from CryptoBox.arithmetic.prime import *
+
+
 p = [randprime(60,1024,1000) for i in range(4)]			
 		
 """ Verification for EKE (RSA, ElGamal) """
