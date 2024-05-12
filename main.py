@@ -10,11 +10,11 @@ from CryptoBox.arithmetic.prime import *
 from CryptoBox.arithmetic.modulo import *
 
 
+from typing import Callable
 
 
 
-
-def randprimess(lower:int, upper:int, order:int)->int:
+def randprimesss(lower:int, upper:int, order:int)->int:
 	""" Function to generate random prime number (for Rabin) """
 	while 1:
 		p = randprime(lower, upper)
@@ -24,21 +24,31 @@ def randprimess(lower:int, upper:int, order:int)->int:
 	return p
 
 
-def randprimes(lower:int, upper:int, order:int)->int:
+def randprimess(lower:int, upper:int, order:int)->int:
 	""" Function to generate random prime number (for ElGamal) """
 	while 1:
 		p = randprime(lower, upper)
 		if not (list(generators(p, order)) == []):
 				break
 	return p
-	
+
+
+def randprimes(rand:Callable, lower:int, upper:int, order:int, n:int)->List[int]:
+	primes = []			
+	while  1:
+		x = rand(60,1024,1000)
+		if not x in primes:
+			primes.append(x)
+		if len(primes) == 4:
+			break
+	return	primes
 	
 	
 	
 if __name__ == "__main__":
 	
 	error = 0
-	count = 10
+	count = 20
 	for i in range(count): 
 		
 		err = False
@@ -50,9 +60,7 @@ if __name__ == "__main__":
 		########### Verification for encryption ###########
 		
 		""" Prime numbers for key generation """
-		#p = [randprime(60,1024) for i in range(4)]
-		p = [randprimes(60,1024,1000) for i in range(4)]
-		
+		p = randprimes(randprimesss, 60, 1024, 1000, 4)
 		print(f"Primary: {p[0]},{p[1]}, {p[2]},{p[3]}")
 		
 		""" Choice of method of encryption """
@@ -72,6 +80,7 @@ if __name__ == "__main__":
 		
 		
 		""" Verification for RSA, ElGamal """
+		
 		if not (msg == plain):
 			print(f"\033[0;33m[-]Error: encryption/decryption not working.\033[0m")
 			err = True
@@ -82,8 +91,8 @@ if __name__ == "__main__":
 		for j in range(len(plain)):
 			if not (msg[j] in plain[j]):
 				print(f"\033[0;33m[-]Error: encryption/decryption not working.\033[0m")
-				for n in range(len(plain)):
-					print(f"{msg[n]} : {plain[n]}")
+				#for n in range(len(plain)):
+					#print(f"{msg[n]} : {plain[n]}")
 				break
 		
 		"""
@@ -94,20 +103,21 @@ if __name__ == "__main__":
 		R = sha1 
 		
 		""" Falsify message (or not) """
-		encode = R(msg)
-		flag = random.randint(0,1)
-		if flag == 0:
-			encode = R(msg.replace(msg[random.randint(0, len(msg)-1)], random.choice(string.printable)))
 		
 		sign = A.signature(msg, R)
-		verif = B.verification(encode, sign, A.PublicKey())
+		
+		flag = random.randint(0,1)
+		if flag == 0:
+			sign = sign.replace(sign[random.randint(0, len(sign)-1)], random.choice(string.printable))
+		
+		verif = B.verification(R(msg), sign, A.PublicKey())
 
 		if (flag == 0 and verif == True) or (flag == 1 and verif == False):
 			print(f"\033[0;35m[-]Error: signature not working. \033[0m")
 			err = True
 			#break
 	
-	
+		
 		if err:
 			error += 1
 		print(f"\033[0;34m[+]Done : test {i} ({error}/{(i+1)})\033[0m.\n")
