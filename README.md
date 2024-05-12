@@ -50,6 +50,7 @@ if __name__ == "__main__":
 
     msg = "helo:)ThisismyCryptoBox."
     
+    """ p, q - prime numbers of size ~n/2, with sizeof(n)=1024 or sizeof(n)=2048 """
     A = RSA(n=1024, p=3041, q=131)
     B = RSA(n=1024, p=1021, q=113)
     		
@@ -60,27 +61,9 @@ if __name__ == "__main__":
     print(f"Plain : {plain}")
 ```
 
+
+
 ###### Example 2
-```python
-from CryptoBox.asymetric.Rabin import Rabin
-
-if __name__ == "__main__":
-
-    msg = "helo:)ThisismyCryptoBox."
-    
-    A = Rabin(p=191, q=21001)
-    B = Rabin(p=251, q=1051)
-    		
-    cipher = A.encrypt(msg, B.PublicKey())
-    plain = B.decrypt(cipher)
-    
-    print(f"Msg : {msg}")
-    print(f"Plain : {plain}")
-
-```
-
-
-###### Example 3
 ```python
 from CryptoBox.arithmetic.prime import randprime
 from CryptoBox.asymetric.ElGamal import ElGamal
@@ -89,6 +72,7 @@ if __name__ == "__main__":
 
     msg = "helo:)ThisismyCryptoBox."
     
+    """ p - prime number, with len(p) >= 1024 bits """
     A = ElGamal(p=113, order=100)
     B = ElGamal(p=701, order=100)
     		
@@ -99,6 +83,26 @@ if __name__ == "__main__":
     print(f"Plain : {plain}")
 ```
 
+
+###### Example 3
+```python
+from CryptoBox.asymetric.Rabin import Rabin
+
+if __name__ == "__main__":
+
+    msg = "helo:)ThisismyCryptoBox."
+    
+    """ p, q - prime numbers, with len(pq) >= 1024 bits and p,q  = 3 mod 4 """
+    A = Rabin(p=191, q=21001)
+    B = Rabin(p=251, q=1051)
+    		
+    cipher = A.encrypt(msg, B.PublicKey())
+    plain = B.decrypt(cipher)
+    
+    print(f"Msg : {msg}")
+    print(f"Plain : {plain}")
+
+```
 
 #### Signatures
 
