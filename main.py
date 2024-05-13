@@ -48,7 +48,7 @@ def randprimes(rand:Callable, lower:int, upper:int, order:int, n:int)->List[int]
 if __name__ == "__main__":
 	
 	error = 0
-	count = 20
+	count = 1
 	for i in range(count): 
 		
 		err = False
@@ -110,6 +110,7 @@ if __name__ == "__main__":
 		if flag == 0:
 			sign = sign.replace(sign[random.randint(0, len(sign)-1)], random.choice(string.printable))
 		
+	
 		verif = B.verification(R(msg), sign, A.PublicKey())
 
 		if (flag == 0 and verif == True) or (flag == 1 and verif == False):
@@ -117,7 +118,7 @@ if __name__ == "__main__":
 			err = True
 			#break
 	
-		
+			
 		if err:
 			error += 1
 		print(f"\033[0;34m[+]Done : test {i} ({error}/{(i+1)})\033[0m.\n")

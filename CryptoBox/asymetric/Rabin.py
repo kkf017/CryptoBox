@@ -89,7 +89,15 @@ class Rabin():
 		for i in sign:
 			u = ChineseRemainder(i, self.p, self.q)
 			v = [pow(a,2,self.n) for a in u]
-			print(f"\n{i} : {u} -> {v}")
+			
+			h = i
+			p, q = self.p, self.q
+			n = p*q
+			lp = q * pow(h, (p + 1) // 4, p) * pow(q, p - 2, p)
+			rp = p * pow(h, (q + 1) // 4, q) * pow(p, q - 2, q)
+			s = (lp + rp) % n
+			print(f"\n{i} : {u} -> {v} or {s}, {pow(s,2,n)}")
+			input()
 			
 		sign = [[chr(x) for x in ChineseRemainder(i, self.p, self.q)] for i in sign]
 		return sign
